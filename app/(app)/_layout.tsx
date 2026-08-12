@@ -12,6 +12,9 @@ export default function AppLayout() {
       }}
     >
       <Stack.Screen name="index" options={{ title: "Início" }} />
+      <Stack.Screen name="pacientes" options={{ title: "Pacientes" }} />
+      <Stack.Screen name="agenda" options={{ title: "Agenda de hoje" }} />
+      <Stack.Screen name="paciente/[id]" options={{ title: "Paciente" }} />
     </Stack>
   );
 }
