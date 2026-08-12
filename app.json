@@ -1,17 +1,24 @@
 {
   "expo": {
-    "name": "ledivan-mobile",
+    "name": "L'E-Divan",
     "slug": "ledivan-mobile",
     "version": "1.0.0",
+    "scheme": "ledivan",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#2b1830"
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.reverblabs.ledivan"
     },
     "android": {
+      "package": "com.reverblabs.ledivan",
+      "versionCode": 1,
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#2b1830",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -20,6 +27,28 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-router",
+      "expo-status-bar",
+      "expo-secure-store",
+      "expo-sqlite",
+      "expo-splash-screen",
+      [
+        "expo-local-authentication",
+        { "faceIDPermission": "Usar biometria para desbloquear o app" }
+      ],
+      [
+        "expo-notifications",
+        { "color": "#8b5cf6" }
+      ]
+    ],
+    "extra": {
+      "apiBaseUrl": "https://ledivan.com.br",
+      "router": {},
+      "eas": {}
+    },
+    "runtimeVersion": "1.0.0",
+    "updates": {}
   }
 }
