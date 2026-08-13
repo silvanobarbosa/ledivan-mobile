@@ -1,0 +1,22 @@
+{
+  "cli": {
+    "version": ">= 21.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease -PreactNativeArchitectures=arm64-v8a",
+        "autoIncrement": true
+      }
+    },
+    "production": {
+      "android": { "buildType": "app-bundle", "autoIncrement": true }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
