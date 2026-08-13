@@ -17,6 +17,7 @@
     },
     "android": {
       "package": "com.reverblabs.ledivan",
+      "googleServicesFile": "./google-services.json",
       "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#2b1830",
