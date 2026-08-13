@@ -1,11 +1,13 @@
 import { useEffect, useState, useCallback } from "react";
-import { View, Text, StyleSheet, ScrollView, Pressable, RefreshControl } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Pressable, RefreshControl, Linking } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "../../lib/auth";
 import { theme } from "../../lib/theme";
 import { api, ApiError } from "../../lib/api";
 import { syncAll } from "../../lib/sync";
 import { pendingCount } from "../../lib/localdb";
+import { registerForPush } from "../../lib/push";
+import { useUpdate } from "../../lib/update";
 
 type Resumo = { pacientesAtivos?: number; sessoesHoje?: number; recebidoMes?: number };
 
@@ -16,6 +18,10 @@ export default function Home() {
   const [erro, setErro] = useState("");
   const [carregando, setCarregando] = useState(true);
   const [pendentes, setPendentes] = useState(0);
+  const update = useUpdate();
+
+  // registra o token de push uma vez, ao entrar na Home logada
+  useEffect(() => { void registerForPush(token); }, [token]);
 
   const carregar = useCallback(async () => {
     setErro("");
@@ -42,6 +48,12 @@ export default function Home() {
       refreshControl={<RefreshControl refreshing={carregando} onRefresh={carregar} tintColor={theme.violet} />}
     >
       <Text style={s.ola}>Olá, {user?.name || "bem-vinda"}!</Text>
+
+      {update ? (
+        <Pressable style={s.update} onPress={() => Linking.openURL(update.apkUrl)}>
+          <Text style={s.updateTxt}>Nova versão v{update.version} disponível — toque para baixar</Text>
+        </Pressable>
+      ) : null}
 
       {pendentes > 0 ? (
         <View style={s.fila}>
@@ -85,6 +97,8 @@ function Tile({ label, valor, money }: { label: string; valor?: number; money?: 
 const s = StyleSheet.create({
   container: { padding: 20 },
   ola: { fontSize: 22, fontWeight: "800", color: theme.eggplant, marginBottom: 16 },
+  update: { backgroundColor: theme.violet, borderRadius: 12, padding: 12, marginBottom: 12 },
+  updateTxt: { color: theme.white, fontSize: 13, fontWeight: "600" },
   fila: { backgroundColor: "#fef3c7", borderRadius: 12, padding: 12, marginBottom: 12 },
   filaTxt: { color: "#92400e", fontSize: 13 },
   erro: { color: theme.danger, marginBottom: 12 },
