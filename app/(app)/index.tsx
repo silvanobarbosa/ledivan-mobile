@@ -74,6 +74,9 @@ export default function Home() {
       <Pressable style={s.acao} onPress={() => router.push("/agenda")}>
         <Text style={s.acaoTxt}>Agenda de hoje</Text>
       </Pressable>
+      <Pressable style={s.acao} onPress={() => router.push("/financeiro")}>
+        <Text style={s.acaoTxt}>Financeiro</Text>
+      </Pressable>
 
       <Pressable style={s.sair} onPress={() => void signOut()}>
         <Text style={s.sairTxt}>Sair</Text>

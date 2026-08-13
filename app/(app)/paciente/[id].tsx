@@ -51,7 +51,12 @@ export default function PacienteDetalhe() {
 
   return (
     <ScrollView contentContainerStyle={s.container}>
-      <Text style={s.nome}>{nome ?? "Paciente"}</Text>
+      <View style={s.topo}>
+        <Text style={s.nome}>{nome ?? "Paciente"}</Text>
+        <Pressable onPress={() => router.push(`/paciente/editar/${id}`)}>
+          <Text style={s.editar}>Editar</Text>
+        </Pressable>
+      </View>
 
       <Text style={s.secao}>Registrar sessão de hoje</Text>
 
@@ -84,7 +89,9 @@ function Toggle({ label, value, onChange }: { label: string; value: boolean; onC
 
 const s = StyleSheet.create({
   container: { padding: 20 },
-  nome: { fontSize: 24, fontWeight: "800", color: theme.eggplant, marginBottom: 20 },
+  topo: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 20 },
+  nome: { fontSize: 24, fontWeight: "800", color: theme.eggplant, flex: 1 },
+  editar: { fontSize: 15, color: theme.violet, fontWeight: "700" },
   secao: { fontSize: 16, fontWeight: "700", color: theme.ink, marginBottom: 12 },
   toggle: {
     flexDirection: "row", alignItems: "center", justifyContent: "space-between",

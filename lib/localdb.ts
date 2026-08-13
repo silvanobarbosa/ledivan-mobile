@@ -107,3 +107,18 @@ export async function markError(clientId: string, err: string): Promise<void> {
   const db = await getDb();
   await db.runAsync("UPDATE outbox SET state='error', error=? WHERE client_id=?", [err, clientId]);
 }
+
+/** Atualiza os campos de um paciente no cache local (após editar online). */
+export async function updatePatientCache(id: string, campos: Partial<LocalPatient>): Promise<void> {
+  const db = await getDb();
+  const cols = Object.keys(campos);
+  if (!cols.length) return;
+  const set = cols.map((c) => `${c}=?`).join(",");
+  await db.runAsync(`UPDATE patients SET ${set} WHERE id=?`, [...cols.map((c) => (campos as Record<string, unknown>)[c] as string), id]);
+}
+
+/** Um paciente do cache por id. */
+export async function getPatient(id: string): Promise<LocalPatient | null> {
+  const db = await getDb();
+  return db.getFirstAsync<LocalPatient>("SELECT id,name,phone,status,fee,frequency FROM patients WHERE id=?", [id]);
+}
