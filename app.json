@@ -51,6 +51,16 @@
         {
           "color": "#8b5cf6"
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "extraMavenRepos": [
+              "https://maven-central.storage-download.googleapis.com/maven2/"
+            ]
+          }
+        }
       ]
     ],
     "extra": {
