@@ -1,11 +1,64 @@
-import { useState } from "react";
-import { View, Text, StyleSheet, Pressable, TextInput, Alert, ScrollView } from "react-native";
+import { useState, useEffect, useCallback } from "react";
+import { View, Text, StyleSheet, Pressable, TextInput, Alert, ScrollView, ActivityIndicator } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useAuth } from "../../../lib/auth";
+import { api } from "../../../lib/api";
 import { theme } from "../../../lib/theme";
 import { enqueueSession } from "../../../lib/localdb";
 import { pushOutbox } from "../../../lib/sync";
 import { uuid } from "../../../lib/uuid";
+
+type StatusRow = { id: string; emoji: string; text: string | null; createdAt: string; reactionEmoji: string | null; reactionText: string | null; reactionAt: string | null };
+const REACOES = ["❤️", "🫂", "👍", "🙂", "💪", "🌱"];
+const fmtDT = (iso: string) => new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
+
+// Status do dia do paciente — o terapeuta consulta antes da sessão e pode reagir (push de volta).
+function StatusDoDia({ patientId, token }: { patientId: string; token: string | null }) {
+  const [rows, setRows] = useState<StatusRow[] | null>(null);
+  const [reagindo, setReagindo] = useState(false);
+
+  const load = useCallback(async () => {
+    try { const r = await api<{ statuses: StatusRow[] }>(`/api/app/status?patientId=${patientId}`, { token }); setRows(r.statuses || []); }
+    catch { setRows([]); }
+  }, [patientId, token]);
+  useEffect(() => { load(); }, [load]);
+
+  if (rows === null) return <ActivityIndicator style={{ marginBottom: 16 }} color={theme.violet} />;
+  if (!rows.length) return null;
+  const u = rows[0];
+
+  const react = async (emoji: string) => {
+    setReagindo(true);
+    try {
+      await api("/api/app/status", { method: "POST", token, body: { statusId: u.id, emoji } });
+      setRows((prev) => prev ? prev.map((x) => x.id === u.id ? { ...x, reactionEmoji: emoji, reactionAt: new Date().toISOString() } : x) : prev);
+    } catch { /* ignore */ } finally { setReagindo(false); }
+  };
+
+  return (
+    <View style={st.card}>
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+        <Text style={st.titulo}>Status do dia {!u.reactionAt ? "🔴" : ""}</Text>
+        <Text style={st.data}>{fmtDT(u.createdAt)}</Text>
+      </View>
+      <View style={{ flexDirection: "row", alignItems: "flex-start", gap: 12, marginTop: 10 }}>
+        <Text style={{ fontSize: 40 }}>{u.emoji}</Text>
+        <View style={{ flex: 1 }}>
+          {u.text ? <Text style={{ color: theme.ink }}>{u.text}</Text> : null}
+          {u.reactionEmoji ? (
+            <Text style={{ color: theme.muted, fontSize: 12, marginTop: 4 }}>Você reagiu: {u.reactionEmoji}</Text>
+          ) : (
+            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 8 }}>
+              {REACOES.map((e) => (
+                <Pressable key={e} disabled={reagindo} onPress={() => react(e)} style={st.reacBtn}><Text style={{ fontSize: 20 }}>{e}</Text></Pressable>
+              ))}
+            </View>
+          )}
+        </View>
+      </View>
+    </View>
+  );
+}
 
 /**
  * Detalhe do paciente + REGISTRAR SESSÃO — o fluxo que precisa funcionar offline.
@@ -57,6 +110,8 @@ export default function PacienteDetalhe() {
           <Text style={s.editar}>Editar</Text>
         </Pressable>
       </View>
+
+      {id ? <StatusDoDia patientId={String(id)} token={token} /> : null}
 
       <Text style={s.secao}>Registrar sessão de hoje</Text>
 
@@ -110,4 +165,11 @@ const s = StyleSheet.create({
   },
   btn: { height: 52, borderRadius: 14, backgroundColor: theme.violet, alignItems: "center", justifyContent: "center", marginTop: 20 },
   btnTxt: { color: theme.white, fontSize: 16, fontWeight: "700" },
+});
+
+const st = StyleSheet.create({
+  card: { backgroundColor: "#faf5ff", borderColor: "#e9d5ff", borderWidth: 1, borderRadius: 16, padding: 16, marginBottom: 18 },
+  titulo: { fontSize: 15, fontWeight: "800", color: theme.eggplant },
+  data: { fontSize: 12, color: theme.muted },
+  reacBtn: { backgroundColor: theme.white, borderColor: theme.border, borderWidth: 1, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 6 },
 });
