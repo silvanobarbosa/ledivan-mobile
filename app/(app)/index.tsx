@@ -8,6 +8,7 @@ import { syncAll } from "../../lib/sync";
 import { pendingCount } from "../../lib/localdb";
 import { registerForPush } from "../../lib/push";
 import { useUpdate } from "../../lib/update";
+import * as Notifications from "expo-notifications";
 
 type Resumo = { pacientesAtivos?: number; sessoesHoje?: number; recebidoMes?: number };
 
@@ -22,6 +23,16 @@ export default function Home() {
 
   // registra o token de push uma vez, ao entrar na Home logada
   useEffect(() => { void registerForPush(token); }, [token]);
+
+  // Deep-link do push: tocar num aviso de "status do dia" abre o paciente direto.
+  useEffect(() => {
+    const abrir = (data: any) => {
+      if (data?.type === "status" && data?.patientId) router.push(`/paciente/${data.patientId}` as any);
+    };
+    Notifications.getLastNotificationResponseAsync().then((r) => { if (r) abrir(r.notification.request.content.data); });
+    const sub = Notifications.addNotificationResponseReceivedListener((r) => abrir(r.notification.request.content.data));
+    return () => sub.remove();
+  }, [router]);
 
   const carregar = useCallback(async () => {
     setErro("");
