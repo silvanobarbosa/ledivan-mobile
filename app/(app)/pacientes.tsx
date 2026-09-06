@@ -51,11 +51,11 @@ export default function Pacientes() {
         ListEmptyComponent={<Text style={s.vazio}>Nenhum paciente.</Text>}
         renderItem={({ item }) => (
           <Pressable style={s.card} onPress={() => router.push(`/paciente/${item.id}?nome=${encodeURIComponent(item.name)}`)}>
-            <View style={{ flex: 1 }}>
-              <Text style={s.nome}>{item.name}</Text>
-              <Text style={s.meta}>{item.status ?? "—"}{item.frequency ? ` · ${item.frequency}` : ""}</Text>
+            <View style={{ flex: 1, minWidth: 0 }}>
+              <Text style={s.nome} numberOfLines={1}>{item.name}</Text>
+              <Text style={s.meta} numberOfLines={1}>{item.status ?? "—"}{item.frequency ? ` · ${item.frequency}` : ""}</Text>
             </View>
-            <Text style={s.fee}>{item.fee ? `R$ ${item.fee}` : ""}</Text>
+            <Text style={s.fee} numberOfLines={1}>{item.fee ? `R$ ${item.fee}` : ""}</Text>
           </Pressable>
         )}
       />
@@ -76,6 +76,6 @@ const s = StyleSheet.create({
   },
   nome: { fontSize: 16, fontWeight: "700", color: theme.ink },
   meta: { fontSize: 13, color: theme.muted, marginTop: 2 },
-  fee: { fontSize: 14, color: theme.violet, fontWeight: "600" },
+  fee: { fontSize: 14, color: theme.violet, fontWeight: "600", flexShrink: 0, marginLeft: 10 },
   vazio: { textAlign: "center", color: theme.muted, marginTop: 40 },
 });

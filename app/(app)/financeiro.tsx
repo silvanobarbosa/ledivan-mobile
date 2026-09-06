@@ -47,11 +47,11 @@ export default function Financeiro() {
       ListEmptyComponent={!carregando ? <Text style={s.vazio}>Nenhum pagamento no mês.</Text> : null}
       renderItem={({ item }) => (
         <View style={s.linha}>
-          <View style={{ flex: 1 }}>
-            <Text style={s.nome}>{item.patientName}</Text>
-            <Text style={s.data}>{new Date(item.date).toLocaleDateString("pt-BR")}</Text>
+          <View style={{ flex: 1, minWidth: 0 }}>
+            <Text style={s.nome} numberOfLines={1}>{item.patientName}</Text>
+            <Text style={s.data} numberOfLines={1}>{new Date(item.date).toLocaleDateString("pt-BR")}</Text>
           </View>
-          <Text style={s.valor}>{brl(item.amount)}</Text>
+          <Text style={s.valor} numberOfLines={1}>{brl(item.amount)}</Text>
         </View>
       )}
     />
@@ -71,5 +71,5 @@ const s = StyleSheet.create({
   },
   nome: { fontSize: 15, fontWeight: "600", color: theme.ink },
   data: { fontSize: 12, color: theme.muted, marginTop: 2 },
-  valor: { fontSize: 15, fontWeight: "700", color: theme.success },
+  valor: { fontSize: 15, fontWeight: "700", color: theme.success, flexShrink: 0, marginLeft: 10 },
 });
