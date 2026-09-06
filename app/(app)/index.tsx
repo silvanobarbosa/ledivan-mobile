@@ -58,7 +58,7 @@ export default function Home() {
       contentContainerStyle={s.container}
       refreshControl={<RefreshControl refreshing={carregando} onRefresh={carregar} tintColor={theme.violet} />}
     >
-      <Text style={s.ola}>Olá, {user?.name || "bem-vinda"}!</Text>
+      <Text style={s.ola} numberOfLines={1}>Olá, {user?.name || "bem-vinda"}!</Text>
 
       {update ? (
         <Pressable style={s.update} onPress={() => Linking.openURL(update.apkUrl)}>

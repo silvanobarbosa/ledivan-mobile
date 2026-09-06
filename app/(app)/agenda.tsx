@@ -37,9 +37,9 @@ export default function Agenda() {
       renderItem={({ item }) => (
         <View style={s.card}>
           <Text style={s.hora}>{new Date(item.date).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</Text>
-          <View style={{ flex: 1 }}>
-            <Text style={s.nome}>{item.patientName}</Text>
-            <Text style={s.status}>{item.status}</Text>
+          <View style={{ flex: 1, minWidth: 0 }}>
+            <Text style={s.nome} numberOfLines={1}>{item.patientName}</Text>
+            <Text style={s.status} numberOfLines={1}>{item.status}</Text>
           </View>
         </View>
       )}

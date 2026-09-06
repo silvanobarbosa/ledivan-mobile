@@ -37,9 +37,9 @@ function StatusDoDia({ patientId, token }: { patientId: string; token: string | 
 
   return (
     <View style={st.card}>
-      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-        <Text style={st.titulo}>Status do dia {!u.reactionAt ? "🔴" : ""}</Text>
-        <Text style={st.data}>{fmtDT(u.createdAt)}</Text>
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+        <Text style={[st.titulo, { flexShrink: 1 }]} numberOfLines={1}>Status do dia {!u.reactionAt ? "🔴" : ""}</Text>
+        <Text style={[st.data, { flexShrink: 0 }]} numberOfLines={1}>{fmtDT(u.createdAt)}</Text>
       </View>
       <View style={{ flexDirection: "row", alignItems: "flex-start", gap: 12, marginTop: 10 }}>
         <Text style={{ fontSize: 40 }}>{u.emoji}</Text>
@@ -105,8 +105,8 @@ export default function PacienteDetalhe() {
   return (
     <ScrollView contentContainerStyle={s.container}>
       <View style={s.topo}>
-        <Text style={s.nome}>{nome ?? "Paciente"}</Text>
-        <Pressable onPress={() => router.push(`/paciente/editar/${id}`)}>
+        <Text style={s.nome} numberOfLines={1}>{nome ?? "Paciente"}</Text>
+        <Pressable onPress={() => router.push(`/paciente/editar/${id}`)} style={{ flexShrink: 0 }}>
           <Text style={s.editar}>Editar</Text>
         </Pressable>
       </View>
